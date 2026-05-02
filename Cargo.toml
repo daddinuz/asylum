@@ -1,25 +1,31 @@
 [package]
 authors = ["Davide Di Carlo <daddinuz@gmail.com>"]
-description = "A fast, lightweight string interner with automatic cleanup to prevent memory bloat."
-name = "asylum"
-version = "0.1.0"
-edition = "2021"
-license = "MIT"
+categories = ["caching", "data-structures", "memory-management"]
+description = "A fast, lightweight string interner with deferred cleanup."
+edition = "2024"
+exclude = [".github"]
+homepage = "https://github.com/daddinuz/asylum"
 keywords = ["string", "intern", "memory", "deduplication", "reference-counted"]
-rust-version = "1.80.1"
+license = "MIT"
+name = "asylum"
+readme = "README.md"
 repository = "https://github.com/daddinuz/asylum"
+rust-version = "1.86"
+version = "0.2.0"
 
 [profile.release]
 codegen-units = 1
 lto = "fat"
 
+[dependencies]
+hashbrown = { version = "0.17", default-features = false, features = ["default-hasher"] }
+triomphe = { version = "0.1", default-features = false }
+
+[dev-dependencies]
+asylum_previous = { package = "asylum", version = "0.1" }
+criterion = { version = "0.8", default-features = false }
+ustr = "1"
+
 [[bench]]
 name = "bench"
 harness = false
-
-[dev-dependencies]
-criterion = "0.5"
-ustr = "1"
-
-[dependencies]
-hashbrown = { version = "0.15", default-features = false, features = ["default-hasher", "inline-more"] }
