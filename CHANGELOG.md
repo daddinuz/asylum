@@ -2,6 +2,33 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.3.0 - 2026-11-22
+
+### Added
+
+- Added `asylum::with` and `asylum::with_shards` for interning dynamic text in an independent scope. Scoped interners accept 1 through 128 shards, support concurrent interning, and free all their entries when the callback returns or unwinds.
+- Added `asylum::intern_static` to borrow static input bytes when creating a global entry. It shares the registry with `asylum::intern`.
+- Added `Display` for `Symbol` and support for accessing the text through `as_str()` for the lifetime of the entry.
+
+### Changed
+
+- The global `intern(&str)` function now returns `Symbol<'static>` and retains each entry for the life of the process.
+- `Symbol<'a>` is a pointer-sized, `Copy` handle tied to its interner's lifetime. Symbols from the same interner continue to compare and hash by identity. Use `as_str()` for content comparisons across interners.
+- Both interners use eight lookup shards by default. Scoped entries are stored in a `boxcar` arena, replacing reference-counted `triomphe` storage.
+- `size()` counts distinct entries. `capacity()` now reports the total entry count the lookup tables can hold without growing regardless of which shard receives new entries. `shrink_to_fit()` shrinks the lookup tables and preserves all entries.
+- Registry operations panic if they encounter a poisoned shard mutex.
+- Updated the Criterion suite to compare scoped insertion and teardown, plus hot lookup and contention in both APIs, with the applicable asylum 0.2, `ustr`, and `String` baselines.
+
+### Removed
+
+- Removed `collect_unused()`, `Symbol::new()`, `Symbol::count()`, and drop-triggered cleanup.
+
+### Migration Notes
+
+- Replace `Symbol::new` with `asylum::intern` for global entries. Use `asylum::intern_static` to borrow static input bytes on insertion and `Symbol<'static>` in type signatures that store global symbols.
+- To free dynamic text when a workload finishes, use `interner.intern(&text)` inside `asylum::with`. Return `symbol.as_str().to_owned()` if the text needs to leave the scope.
+- Use `shrink_to_fit()` when you want to reduce lookup-table capacity while keeping the entries.
+
 ## 0.2.0 - 2026-05-01
 
 ### Changed

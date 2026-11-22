@@ -1,28 +1,27 @@
 [package]
 authors = ["Davide Di Carlo <daddinuz@gmail.com>"]
 categories = ["caching", "data-structures", "memory-management"]
-description = "A fast, lightweight string interner with deferred cleanup."
+description = "A fast, lightweight string interner."
 edition = "2024"
 exclude = [".github"]
-homepage = "https://github.com/daddinuz/asylum"
-keywords = ["string", "intern", "memory", "deduplication", "reference-counted"]
+keywords = ["string", "intern", "memory", "deduplication", "scoped"]
 license = "MIT"
 name = "asylum"
 readme = "README.md"
 repository = "https://github.com/daddinuz/asylum"
 rust-version = "1.86"
-version = "0.2.0"
+version = "0.3.0"
 
 [profile.release]
 codegen-units = 1
 lto = "fat"
 
 [dependencies]
-hashbrown = { version = "0.17", default-features = false, features = ["default-hasher"] }
-triomphe = { version = "0.1", default-features = false }
+boxcar = { version = "0.2.14", default-features = false }
+hashbrown = { version = "0.17", default-features = false, features = ["default-hasher", "inline-more"] }
 
 [dev-dependencies]
-asylum_previous = { package = "asylum", version = "0.1" }
+asylum_previous = { package = "asylum", version = "0.2" }
 criterion = { version = "0.8", default-features = false }
 ustr = "1"
 
